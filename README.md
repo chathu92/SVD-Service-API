@@ -5,7 +5,7 @@ RESTful web service API
 #How to configure this project
 1. clone or download the project folder called “svdmisservice”
 2. Put project folder into your local host server folder (ex: xamp/htdocs).
-3. Import the database. To do that use this link [GitHub] (https://github.com/SVD-RND-MIS-IT/SVD-Data-Base)
+3. Import the database. To do that use this link [SVD-Data-Base] (https://github.com/SVD-RND-MIS-IT/SVD-Data-Base)
 4. Change “config.php” in “model->common” folder of the project.
 5. Run the server
 
