@@ -216,7 +216,6 @@ class ExamManagement {
      * @return boolean
      */
     private function isExamExists($exm_name) {
-		//$exm_name = "exm1";
 		$stmt = $this->conn->prepare("SELECT exm_name from exam WHERE status = 1 and exm_name = ?  ");
         $stmt->bind_param("s",$exm_name);
         $stmt->execute();
