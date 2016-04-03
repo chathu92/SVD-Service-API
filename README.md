@@ -10,7 +10,6 @@ RESTful web service API
 5. Run the server
 
 #Folder Structure
-1. “svdmisservice” is the project folder.
-1. In that folder it contains three folders
-(a) Config – Slim3 configurations
-(b) Model – Basically it contains database calls. It will contain several modules according to the functionality of the system. It has folder called “common”. It contains files related to the common task. It contains “config.php” to manage configuration details. 
+“svdmisservice” is the project folder.In that folder it contains three folders
+1. Config – Slim3 configurations
+2. Model – Basically it contains database calls. It will contain several modules according to the functionality of the system. It has folder called “common”. It contains files related to the common task. It contains “config.php” to manage configuration details. 
