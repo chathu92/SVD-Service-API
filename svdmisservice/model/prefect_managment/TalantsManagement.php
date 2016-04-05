@@ -1,8 +1,8 @@
 <?php
 require_once '../../model/commen/PassHash.php';
 /**
- * Class to handle all the exam details
- * This class will have CRUD methods for exam
+ * Class to handle all the talant details
+ * This class will have CRUD methods for talant
  *
  * @author Bagya
  *
@@ -21,14 +21,13 @@ class TalantsManagement {
 	
 	
 /*
- * ------------------------ TALANTS TABLE METHODS ------------------------
+ * ------------------------ TALANTS TABLE METHODS -----------------------
  */
 
     /**
      * Creating new talants
      *
      * @param String $tal_name Talant name for the system
-     * @param String $exm_discription Discription of the Exam
 	 * @param String $recode_added_by 
      *
      * @return database transaction status
@@ -68,52 +67,7 @@ class TalantsManagement {
 
     }
 	
-	/**
-     * Update talant
-     *
-     * @param String $tal_name Talant name for the system 
-	 * @param String $recode_added_by 
-     *
-     * @return database transaction status
-     */
-    public function updateTalant($tal_name,$recode_added_by) {
-
-		
-        $response = array();
-        // First check if talant already existed in db
-        if ($this->isTalantExists($tal_name)) {
-            
-			//
-			$stmt = $this->conn->prepare("UPDATE talants set status = 2,  recode_modified_at = now() , recode_modified_by = ? where tal_name = ? and status = 1");
-			$stmt->bind_param("is", $recode_added_by, $tal_name);
-			$result = $stmt->execute();
-			
-            // insert updated recode
-			$stmt = $this->conn->prepare("INSERT INTO talants(tal_name, recode_added_by) values(?, ?)");
-			$stmt->bind_param("si", $exm_name,$recode_added_by );
-			$result = $stmt->execute();
-
-			$stmt->close();
-
-        } else {
-            // talant is not already existed in the db
-            return NOT_EXISTED;
-        }
-		
-         
-
-        // Check for successful update
-        if ($result) {
-			// talant successfully update
-            return UPDATE_SUCCESSFULLY;
-        } else {
-            // Failed to update talant
-            return UPDATE_FAILED;
-        }
-        
-		return $response;
-
-    }
+	
 	
 /**
      * Delete talant
@@ -123,22 +77,22 @@ class TalantsManagement {
      *
      * @return database transaction status
      */
-    public function deleteExam($exm_name, $recode_added_by) {
+    public function deleteTalant($tal_name, $recode_added_by) {
 
 		
         $response = array();
-        // First check if exam already existed in db
-        if ($this->isExamExists($exm_name)) {
+        // First check if talant already existed in db
+        if ($this->isTalantExists($tal_name)) {
            			
 			//
-			$stmt = $this->conn->prepare("UPDATE exam set status = 3, recode_modified_at = now() , recode_modified_by = ? where exm_name = ? and status=1");
-			$stmt->bind_param("is",$recode_added_by, $exm_name);
+			$stmt = $this->conn->prepare("UPDATE talants set status = 3, recode_modified_at = now() , recode_modified_by = ? where tal_name = ? and (status=1 or  status=2)");
+			$stmt->bind_param("is",$recode_added_by, $tal_name);
 			$result = $stmt->execute();
 			
             $stmt->close();
 
         } else {
-            // Exam is not already existed in the db
+            // Talant is not already existed in the db
             return NOT_EXISTED;
         }
 		
@@ -146,10 +100,10 @@ class TalantsManagement {
 
         // Check for successful insertion
         if ($result) {
-			// exam successfully deleted
+			// talant successfully deleted
             return DELETE_SUCCESSFULLY;
         } else {
-            // Failed to delete exam
+            // Failed to delete talant
             return DELETE_FAILED;
         }
         
@@ -158,27 +112,26 @@ class TalantsManagement {
     }
 	  
 	/**
-     * Fetching exam by exm_name
+     * Fetching talants by tal_name
 	 *
-     * @param String $exm_name Exam name
+     * @param String $tal_name tal name
 	 *
-	 *@return Exam object only needed data
+	 *@return talant object only needed data
      */
-    public function getExamByExamName($exm_name) {
-        $stmt = $this->conn->prepare("SELECT exm_name, exm_discription, status, recode_added_at, recode_added_by FROM exam WHERE exm_name = ? and status=1");
-        $stmt->bind_param("s", $exm_name);
+    public function getTalantByTalantName($tal_name) {
+        $stmt = $this->conn->prepare("SELECT tal_name, status, recode_added_at, recode_added_by FROM talants WHERE tal_name = ? and (status=1 or status=2)");
+        $stmt->bind_param("s", $tal_name);
         if ($stmt->execute()) {
-            $stmt->bind_result($exm_name,  $exm_discription, $status, $recode_added_at, $recode_added_by);
+            $stmt->bind_result($tal_name,$status, $recode_added_at, $recode_added_by);
             $stmt->fetch();
-            $exam = array();
-            $exam["exm_name"] = $exm_name;
-            $exam["exm_discription"] = $exm_discription;
-            $exam["status"] = $status;
-            $exam["recode_added_at"] = $recode_added_at;
-			$exam["recode_added_by"] = $recode_added_by;
+            $talant = array();
+            $talant["tal_name"] = $tal_name;
+            $talant["status"] = $status;
+            $talant["recode_added_at"] = $recode_added_at;
+			$talant["recode_added_by"] = $recode_added_by;
 
             $stmt->close();
-            return $exam;
+            return $talant;
         } else {
             return NULL;
         }
@@ -186,16 +139,16 @@ class TalantsManagement {
   
   
 	/**
-     * Fetching all exams
+     * Fetching all talants
 	 *
-     * @return $exams boject set of all exams
+     * @return $talant object set of all talants
      */
-    public function getAllExams() {
-        $stmt = $this->conn->prepare("SELECT * FROM exam WHERE status = 1");
+    public function getAllTalants() {
+        $stmt = $this->conn->prepare("SELECT * FROM talants WHERE status = 1 or  status = 2");
         $stmt->execute();
-        $exams = $stmt->get_result();
+        $talants = $stmt->get_result();
         $stmt->close();
-        return $exams;
+        return $talants;
     }
 	
   
@@ -215,7 +168,7 @@ class TalantsManagement {
      * @return boolean
      */
     private function isTalantExists($tal_name) {
-		$stmt = $this->conn->prepare("SELECT tal_name from talants WHERE status = 1 and tal_name = ?  ");
+		$stmt = $this->conn->prepare("SELECT tal_name from talants WHERE (status = 1 or status = 2)  and tal_name = ?  ");
         $stmt->bind_param("s",$tal_name);
         $stmt->execute();
 		$stmt->store_result();

@@ -48,7 +48,7 @@ function authenticate(\Slim\Route $route) {
 }
 
 /*
- * ------------------------ TALANTS TABLE METHODS ------------------------
+ * ------------------------ TALANTS TABLE METHODS -----------------------
  */
  
 /**
@@ -87,68 +87,39 @@ $app->post('/talants_register',  'authenticate', function() use ($app) {
             echoRespnse(201, $response);
         });
 
+
+
+
 /**
- * Exam Update
- * url - /exam_update/:examName
- * method - PUT
- * params - exm_name, exm_discription
+ * Talants Delete
+ * url - /talants_delete
+ * method - DELETE
+ * params - tal_name
  */
-$app->put('/exam_update/:examName',  'authenticate', function($exm_name) use ($app) {
+$app->delete('/talants_delete', 'authenticate', function() use ($app) {
 	
             // check for required params
-            verifyRequiredParams(array( 'exm_discription'));
+            verifyRequiredParams(array('tal_name'));
 			
 			global $currunt_user_id;
 
             $response = array();
 
-            // reading put params
-            $exm_discription = $app->request->put('exm_discription');
-
-            $examManagement = new ExamManagement();
-			$res = $examManagement->updateExam($exm_name, $exm_discription,$currunt_user_id);
+			// reading post params
+            $tal_name = $app->request->delete('tal_name');
 			
-            if ($res == UPDATE_SUCCESSFULLY) {
-                $response["error"] = false;
-                $response["message"] = "You are successfully updated exam";
-            } else if ($res == UPDATE_FAILED) {
-                $response["error"] = true;
-                $response["message"] = "Oops! An error occurred while updating exam";
-            } else if ($res == NOT_EXISTED) {
-                $response["error"] = true;
-                $response["message"] = "Sorry, this exam is not exist";
-            }
-            // echo json response
-            echoRespnse(201, $response);
-        });
-
-
-/**
- * Exam Delete
- * url - /exam_delete
- * method - DELETE
- * params - exm_name/:examName
- */
-$app->delete('/exam_delete/:examName', 'authenticate', function($exm_name) use ($app) {
-	
-            
-			global $currunt_user_id;
-
-            $response = array();
-
-			
-            $examManagement = new ExamManagement();
-			$res = $examManagement->deleteExam($exm_name, $currunt_user_id);
+            $talantsManagement = new TalantsManagement();
+			$res = $talantsManagement->deleteTalant($tal_name, $currunt_user_id);
 			
             if ($res == DELETE_SUCCESSFULLY) {
                 $response["error"] = false;
-                $response["message"] = "Exam is successfully deleted";
+                $response["message"] = "Talant is successfully deleted";
             } else if ($res == DELETE_FAILED) {
                 $response["error"] = true;
-                $response["message"] = "Oops! An error occurred while deleting exam";
+                $response["message"] = "Oops! An error occurred while deleting talant";
             } else if ($res == NOT_EXISTED) {
                 $response["error"] = true;
-                $response["message"] = "Sorry, this exam is not exist";
+                $response["message"] = "Sorry, this talant is not exist";
             }
             // echo json response
             echoRespnse(201, $response);
@@ -157,19 +128,19 @@ $app->delete('/exam_delete/:examName', 'authenticate', function($exm_name) use (
 
 		
 /**
- * get one exam
+ * get one talant
  * method GET
- * url /exam/:examName          
+ * url /talant/:talantsName       
  */
-$app->get('/exam/:examName', 'authenticate', function($exm_name) {
+$app->get('/talant/:tal_name', 'authenticate', function($tal_name) {
             global $currunt_user_id;
             $response = array();
             
-			$examManagement = new ExamManagement();
-			$res = $examManagement->getExamByExamName($exm_name);
+			$talantsManagement = new TalantsManagement();
+			$res = $talantsManagement->getTalantByTalantName($tal_name);
 
             $response["error"] = false;
-            $response["exam"] = $res;
+            $response["talant"] = $res;
 
             
 
@@ -177,32 +148,31 @@ $app->get('/exam/:examName', 'authenticate', function($exm_name) {
         });
 
 /**
- * Listing all exams
+ * Listing all talants
  * method GET
- * url /exams        
+ * url /talants        
  */
-$app->get('/exams', 'authenticate', function() {
+$app->get('/talants', 'authenticate', function() {
             global $user_id;
 			
             $response = array();
 			
-            $examManagement = new ExamManagement();
-			$res = $examManagement->getAllExams();
+            $talantsManagement = new TalantsManagement();
+			$res = $talantsManagement->getAllTalants();
 
             $response["error"] = false;
-            $response["exam"] = array();
+            $response["talants"] = array();
 
-            // looping through result and preparing exams array
-            while ($exam = $res->fetch_assoc()) {
+            // looping through result and preparing talants array
+            while ($talants = $res->fetch_assoc()) {
                 $tmp = array();
 				
-                $tmp["exm_name"] = $exam["exm_name"];
-                $tmp["exm_discription"] = $exam["exm_discription"];
-                $tmp["status"] = $exam["status"];
-                $tmp["recode_added_at"] = $exam["recode_added_at"];
-				$tmp["recode_added_by"] = $exam["recode_added_by"];
+                $tmp["tal_name"] = $talants["tal_name"];
+                $tmp["status"] = $talants["status"];
+                $tmp["recode_added_at"] = $talants["recode_added_at"];
+				$tmp["recode_added_by"] = $talants["recode_added_by"];
 				
-                array_push($response["exam"], $tmp);
+                array_push($response["talants"], $tmp);
             }
 
             echoRespnse(200, $response);
@@ -223,6 +193,11 @@ function verifyRequiredParams($required_fields) {
     $request_params = $_REQUEST;
     // Handling PUT request params
     if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+        $app = \Slim\Slim::getInstance();
+        parse_str($app->request()->getBody(), $request_params);
+    }
+	// Handling PUT request params
+    if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
         $app = \Slim\Slim::getInstance();
         parse_str($app->request()->getBody(), $request_params);
     }
