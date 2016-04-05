@@ -72,8 +72,10 @@ class ProjectManagement {
 	/**
      * Update project
      *
-     * @param String $exm_name Exam name for the system
-     * @param String $exm_discription Discription of the Exam
+     * @param String $pro_name project name of the system
+     * @param String $pro_discription Discription of the Project 
+	 * @param String $pro_PDF_path project PDF path of the system 
+	 * @param String $pro_supervisor_id project supervisor id of the System
 	 * @param String $recode_added_by 
      *
      * @return database transaction status
@@ -82,23 +84,19 @@ class ProjectManagement {
 
 		
         $response = array();
-        // First check if exam already existed in db
-        if ($this->isExamExists($exm_name)) {
+        // First check if project already existed in db
+        if ($this->isProjectExists($pro_name)) {
             
 			//
-			$stmt = $this->conn->prepare("UPDATE exam set status = 2,  recode_modified_at = now() , recode_modified_by = ? where exm_name = ? and status = 1");
-			$stmt->bind_param("is", $recode_added_by, $exm_name);
+			$stmt = $this->conn->prepare("UPDATE project set status = 2,  recode_modified_at = now() , recode_modified_by = ?, pro_discription = ?, pro_PDF_path = ?, pro_supervisor_id = ? where pro_name = ? and (status = 1 or status = 1)");
+			$stmt->bind_param("issis", $recode_added_by, $pro_discription, $pro_PDF_path, $pro_supervisor_id, $pro_name);
 			$result = $stmt->execute();
 			
-            // insert updated recode
-			$stmt = $this->conn->prepare("INSERT INTO exam(exm_name, exm_discription, recode_added_by) values(?, ?, ?)");
-			$stmt->bind_param("ssi", $exm_name, $exm_discription, $recode_added_by );
-			$result = $stmt->execute();
 
 			$stmt->close();
 
         } else {
-            // exam is not already existed in the db
+            // project is not already existed in the db
             return NOT_EXISTED;
         }
 		
@@ -106,10 +104,10 @@ class ProjectManagement {
 
         // Check for successful update
         if ($result) {
-			// exam successfully update
+			// project successfully update
             return UPDATE_SUCCESSFULLY;
         } else {
-            // Failed to update exam
+            // Failed to update project
             return UPDATE_FAILED;
         }
         
@@ -118,29 +116,29 @@ class ProjectManagement {
     }
 	
 /**
-     * Delete exam
+     * Delete project
      *
-     * @param String $exm_name Exam name for the system
+     * @param String $pro_name Project name for the system
 	 * @param String $recode_added_by
      *
      * @return database transaction status
      */
-    public function deleteExam($exm_name, $recode_added_by) {
+    public function deleteProject($pro_name, $recode_added_by) {
 
 		
         $response = array();
-        // First check if exam already existed in db
-        if ($this->isExamExists($exm_name)) {
+        // First check if project already existed in db
+        if ($this->isProjectExists($pro_name)) {
            			
 			//
-			$stmt = $this->conn->prepare("UPDATE exam set status = 3, recode_modified_at = now() , recode_modified_by = ? where exm_name = ? and status=1");
-			$stmt->bind_param("is",$recode_added_by, $exm_name);
+			$stmt = $this->conn->prepare("UPDATE project set status = 3, recode_modified_at = now() , recode_modified_by = ? where pro_name = ? and (status = 1 or status = 1)");
+			$stmt->bind_param("is",$recode_added_by, $pro_name);
 			$result = $stmt->execute();
 			
             $stmt->close();
 
         } else {
-            // Exam is not already existed in the db
+            // Project is not already existed in the db
             return NOT_EXISTED;
         }
 		
@@ -160,27 +158,29 @@ class ProjectManagement {
     }
 	  
 	/**
-     * Fetching exam by exm_name
+     * Fetching project by pro_name
 	 *
-     * @param String $exm_name Exam name
+     * @param String $pro_name Project name
 	 *
-	 *@return Exam object only needed data
+	 *@return Project object only needed data
      */
-    public function getExamByExamName($exm_name) {
-        $stmt = $this->conn->prepare("SELECT exm_name, exm_discription, status, recode_added_at, recode_added_by FROM exam WHERE exm_name = ? and status=1");
-        $stmt->bind_param("s", $exm_name);
+    public function getProjectByProjectName($pro_name) {
+        $stmt = $this->conn->prepare("SELECT pro_name, pro_discription, pro_PDF_path, pro_supervisor_id, status, recode_added_at, recode_added_by FROM project WHERE pro_name = ? and (status = 1 or status = 1)");
+        $stmt->bind_param("s", $pro_name);
         if ($stmt->execute()) {
-            $stmt->bind_result($exm_name,  $exm_discription, $status, $recode_added_at, $recode_added_by);
+            $stmt->bind_result($pro_name,  $pro_discription, $pro_PDF_path, $pro_supervisor_id, $status, $recode_added_at, $recode_added_by);
             $stmt->fetch();
-            $exam = array();
-            $exam["exm_name"] = $exm_name;
-            $exam["exm_discription"] = $exm_discription;
-            $exam["status"] = $status;
-            $exam["recode_added_at"] = $recode_added_at;
-			$exam["recode_added_by"] = $recode_added_by;
+            $project = array();
+            $project["pro_name"] = $pro_name;
+            $project["pro_discription"] = $pro_discription;
+			$project["pro_PDF_path"] = $pro_PDF_path;
+			$project["pro_supervisor_id"] = $pro_supervisor_id;
+            $project["status"] = $status;
+            $project["recode_added_at"] = $recode_added_at;
+			$project["recode_added_by"] = $recode_added_by;
 
             $stmt->close();
-            return $exam;
+            return $project;
         } else {
             return NULL;
         }
@@ -188,16 +188,16 @@ class ProjectManagement {
   
   
 	/**
-     * Fetching all exams
+     * Fetching all projects
 	 *
-     * @return $exams boject set of all exams
+     * @return $projects object set of all projects
      */
-    public function getAllExams() {
-        $stmt = $this->conn->prepare("SELECT * FROM exam WHERE status = 1");
+    public function getAllProjects() {
+        $stmt = $this->conn->prepare("SELECT * FROM project WHERE status = 1");
         $stmt->execute();
-        $exams = $stmt->get_result();
+        $projects = $stmt->get_result();
         $stmt->close();
-        return $exams;
+        return $projects;
     }
 	
   
@@ -217,7 +217,7 @@ class ProjectManagement {
      * @return boolean
      */
     private function isProjectExists($pro_name) {
-		$stmt = $this->conn->prepare("SELECT pro_name from project WHERE status = 1 and pro_name = ?  ");
+		$stmt = $this->conn->prepare("SELECT pro_name from project WHERE (status = 1 or status = 1)  and pro_name = ?  ");
         $stmt->bind_param("s",$pro_name);
         $stmt->execute();
 		$stmt->store_result();
