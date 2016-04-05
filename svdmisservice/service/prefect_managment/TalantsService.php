@@ -48,7 +48,7 @@ function authenticate(\Slim\Route $route) {
 }
 
 /*
- * ------------------------ TALANTS TABLE METHODS ------------------------
+ * ------------------------ TALANTS TABLE METHODS -----------------------
  */
  
 /**

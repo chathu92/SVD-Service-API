@@ -21,7 +21,7 @@ class TalantsManagement {
 	
 	
 /*
- * ------------------------ TALANTS TABLE METHODS ------------------------
+ * ------------------------ TALANTS TABLE METHODS -----------------------
  */
 
     /**
