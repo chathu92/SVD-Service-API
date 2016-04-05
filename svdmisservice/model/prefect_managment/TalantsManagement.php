@@ -1,8 +1,8 @@
 <?php
 require_once '../../model/commen/PassHash.php';
 /**
- * Class to handle all the exam details
- * This class will have CRUD methods for exam
+ * Class to handle all the talant details
+ * This class will have CRUD methods for talant
  *
  * @author Bagya
  *
@@ -28,7 +28,6 @@ class TalantsManagement {
      * Creating new talants
      *
      * @param String $tal_name Talant name for the system
-     * @param String $exm_discription Discription of the Exam
 	 * @param String $recode_added_by 
      *
      * @return database transaction status

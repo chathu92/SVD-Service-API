@@ -128,7 +128,7 @@ $app->delete('/talants_delete', 'authenticate', function() use ($app) {
 
 		
 /**
- * get one talamt
+ * get one talant
  * method GET
  * url /talant/:talantsName       
  */
@@ -163,7 +163,7 @@ $app->get('/talants', 'authenticate', function() {
             $response["error"] = false;
             $response["talants"] = array();
 
-            // looping through result and preparing exams array
+            // looping through result and preparing talants array
             while ($talants = $res->fetch_assoc()) {
                 $tmp = array();
 				
