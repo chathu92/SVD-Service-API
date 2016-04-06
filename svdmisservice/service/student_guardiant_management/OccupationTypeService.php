@@ -70,7 +70,7 @@ $app->post('/occupation_type_register',  'authenticate', function() use ($app) {
             $occ_type_name = $app->request->post('occ_type_name');
             $occ_type_description = $app->request->post('occ_type_description');
            
-            $occupationTypeManagement = new OccupationTypeManagement();
+            $occupationTypeManagement = new occupationTypeManagement();
 			$res = $occupationTypeManagement->createOccupation_type($occ_type_name, $occ_type_description, $currunt_user_id);
 			
             if ($res == CREATED_SUCCESSFULLY) {
@@ -88,38 +88,36 @@ $app->post('/occupation_type_register',  'authenticate', function() use ($app) {
         });
 
 /**
- * Project Update
- * url - /project_update
+ * Occupation_type Update
+ * url - /occupation_type_updates
  * method - PUT
- * params - pro_name, pro_discription, pro_PDF_path, pro_supervisor_id
+ * params - occ_type_name, occ_type_description
  */
-$app->put('/project_update',  'authenticate', function() use ($app) {
+$app->put('/occupation_type_updates','authenticate', function() use ($app) {
 	
-            // check for required params
-            verifyRequiredParams(array( 'pro_name','pro_discription', 'pro_PDF_path', 'pro_supervisor_id'));
+             // check for required params
+            verifyRequiredParams(array('occ_type_name', 'occ_type_description' ));
 			
 			global $currunt_user_id;
 
             $response = array();
 
             // reading put params
-			$pro_name = $app->request->put('pro_name'); 
-            $pro_discription = $app->request->put('pro_discription'); 
-			$pro_PDF_path = $app->request->put('pro_PDF_path'); 
-			$pro_supervisor_id = $app->request->put('pro_supervisor_id');
-
-            $projectManagement = new ProjectManagement();
-			$res = $projectManagement->updateProject($pro_name, $pro_discription, $pro_PDF_path, $pro_supervisor_id, $currunt_user_id);
+			$occ_type_name = $app->request->put('occ_type_name'); 
+            $occ_type_description = $app->request->put('occ_type_description'); 
+			
+            $occupationTypeManagement = new OccupationTypeManagement();
+			$res = $occupationTypeManagement->updateOccupation_type($occ_type_name, $occ_type_description, $currunt_user_id);
 			
             if ($res == UPDATE_SUCCESSFULLY) {
                 $response["error"] = false;
-                $response["message"] = "You are successfully updated Project";
+                $response["message"] = "Occupation type is Updated";
             } else if ($res == UPDATE_FAILED) {
                 $response["error"] = true;
-                $response["message"] = "Oops! An error occurred while updating Project";
+                $response["message"] = "Oops! An error occurred while updating occupation type ";
             } else if ($res == NOT_EXISTED) {
                 $response["error"] = true;
-                $response["message"] = "Sorry, this Project is not exist";
+                $response["message"] = "Sorry,this occupation type not exist";
             }
             // echo json response
             echoRespnse(201, $response);

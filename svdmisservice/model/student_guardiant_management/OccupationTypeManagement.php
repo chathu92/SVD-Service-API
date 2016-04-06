@@ -68,26 +68,24 @@ class OccupationTypeManagement {
     }
 	
 	/**
-     * Update project
+     * Update  Occupation_type
      *
-     * @param String $pro_name project name of the system
-     * @param String $pro_discription Discription of the Project 
-	 * @param String $pro_PDF_path project PDF path of the system 
-	 * @param String $pro_supervisor_id project supervisor id of the System
+     * @param String $occ_type_name Occupation_type name
+	 * @param String $occ_type_description Occupation_type Discription 
 	 * @param String $recode_added_by 
      *
      * @return database transaction status
      */
-    public function updateProject($pro_name, $pro_discription, $pro_PDF_path, $pro_supervisor_id, $recode_added_by) {
+    public function updateOccupation_type($occ_type_name, $occ_type_description, $recode_added_by) {
 
 		
         $response = array();
         // First check if project already existed in db
-        if ($this->isProjectExists($pro_name)) {
+        if ($this->isOccupation_typeExists($occ_type_name)) {
             
 			//
-			$stmt = $this->conn->prepare("UPDATE project set status = 2,  recode_modified_at = now() , recode_modified_by = ?, pro_discription = ?, pro_PDF_path = ?, pro_supervisor_id = ? where pro_name = ? and (status = 1 or status = 1)");
-			$stmt->bind_param("issis", $recode_added_by, $pro_discription, $pro_PDF_path, $pro_supervisor_id, $pro_name);
+			$stmt = $this->conn->prepare("UPDATE occupation_type set status = 2,  recode_modified_at = now() , recode_modified_by = ?, occ_type_description= ? where occ_type_name= ? and (status = 1 or status = 2)");
+			$stmt->bind_param("iss", $recode_added_by, $occ_type_description, $occ_type_name);
 			$result = $stmt->execute();
 			
 
