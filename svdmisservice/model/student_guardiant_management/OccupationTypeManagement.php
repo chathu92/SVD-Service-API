@@ -3,7 +3,7 @@
  * Class to handle all the exam details
  * This class will have CRUD methods for exam
  *
- * @author Kalani Parapitiya
+ * @author Chathuri Gunarathna
  *
  */
 
@@ -112,23 +112,23 @@ class OccupationTypeManagement {
     }
 	
 /**
-     * Delete project
+     * Delete Occupation_type 
      *
-     * @param String $pro_name Project name for the system
+     * @param String $occ_type_name for the system
 	 * @param String $recode_added_by
      *
      * @return database transaction status
      */
-    public function deleteProject($pro_name, $recode_added_by) {
+    public function deleteOccupationType($occ_type_name, $recode_added_by) {
 
 		
         $response = array();
         // First check if project already existed in db
-        if ($this->isProjectExists($pro_name)) {
+        if ($this->isProjectExists($occ_type_name)) {
            			
 			//
-			$stmt = $this->conn->prepare("UPDATE project set status = 3, recode_modified_at = now() , recode_modified_by = ? where pro_name = ? and (status = 1 or status = 1)");
-			$stmt->bind_param("is",$recode_added_by, $pro_name);
+			$stmt = $this->conn->prepare("UPDATE occupation_type set status = 3, recode_modified_at = now() , recode_modified_by = ? where occ_type_name = ? and (status = 1 or status = 2)");
+			$stmt->bind_param("is", $recode_added_by,$occ_type_name);
 			$result = $stmt->execute();
 			
             $stmt->close();
@@ -154,29 +154,27 @@ class OccupationTypeManagement {
     }
 	  
 	/**
-     * Fetching project by pro_name
+     * Fetching occupation_type by occ_type_name
 	 *
-     * @param String $pro_name Project name
+     * @param String $occ_type_name  occupation_type name
 	 *
 	 *@return Project object only needed data
      */
-    public function getProjectByProjectName($pro_name) {
-        $stmt = $this->conn->prepare("SELECT pro_name, pro_discription, pro_PDF_path, pro_supervisor_id, status, recode_added_at, recode_added_by FROM project WHERE pro_name = ? and (status = 1 or status = 1)");
-        $stmt->bind_param("s", $pro_name);
+    public function getOccTypeNametByProjectName($occ_type_name) {
+        $stmt = $this->conn->prepare("SELECT occ_type_name, occ_type_description, status, recode_added_at, recode_added_by FROM occupation_type WHERE occ_type_name = ? and (status = 1 or status = 2)");
+        $stmt->bind_param("s", $occ_type_name);
         if ($stmt->execute()) {
-            $stmt->bind_result($pro_name,  $pro_discription, $pro_PDF_path, $pro_supervisor_id, $status, $recode_added_at, $recode_added_by);
+            $stmt->bind_result($occ_type_name, $cc_type_description, $status, $recode_added_at, $recode_added_by);
             $stmt->fetch();
-            $project = array();
-            $project["pro_name"] = $pro_name;
-            $project["pro_discription"] = $pro_discription;
-			$project["pro_PDF_path"] = $pro_PDF_path;
-			$project["pro_supervisor_id"] = $pro_supervisor_id;
-            $project["status"] = $status;
-            $project["recode_added_at"] = $recode_added_at;
-			$project["recode_added_by"] = $recode_added_by;
+            $occupation_type = array();
+            $occupation_type["occ_type_name"] = $occ_type_name;
+            $occupation_type["occ_type_description"] = $occ_type_description;
+            $occupation_type["status"] = $status;
+            $occupation_type["recode_added_at"] = $recode_added_at;
+			$occupation_type["recode_added_by"] = $recode_added_by;
 
             $stmt->close();
-            return $project;
+            return $occupation_type;
         } else {
             return NULL;
         }
@@ -184,16 +182,16 @@ class OccupationTypeManagement {
   
   
 	/**
-     * Fetching all projects
+     * Fetching all occupation_types
 	 *
-     * @return $projects object set of all projects
+     * @return $occupation_types object set of all occupation_types
      */
     public function getAllProjects() {
-        $stmt = $this->conn->prepare("SELECT * FROM project WHERE status = 1");
+        $stmt = $this->conn->prepare("SELECT * FROM occupation_type WHERE status = 1");
         $stmt->execute();
-        $projects = $stmt->get_result();
+        $occupation_types = $stmt->get_result();
         $stmt->close();
-        return $projects;
+        return $occupation_types;
     }
 	
   
