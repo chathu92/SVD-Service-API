@@ -125,36 +125,36 @@ $app->put('/occupation_type_updates','authenticate', function() use ($app) {
 
 
 /**
- * Project Delete
- * url - /project_delete
+ * Occupation_type Delete
+ * url - /occupation_type_delete
  * method - DELETE
- * params - pro_name
+ * params -occ_type_name
  */
-$app->delete('/project_delete', 'authenticate', function() use ($app) {
+$app->delete('/occupation_type_delete', 'authenticate', function() use ($app) {
 	
             // check for required params
-            verifyRequiredParams(array( 'pro_name'));
+            verifyRequiredParams(array('occ_type_name'));
 			
 			global $currunt_user_id;
 
 			// reading put params
-			$pro_name = $app->request->delete('pro_name'); 
+			$occ_type_name = $app->request->delete('occ_type_name'); 
 			
             $response = array();
 
 			
-            $projectManagement = new ProjectManagement();
-			$res = $projectManagement->deleteProject($pro_name, $currunt_user_id);
+			$occupationTypeManagement = new OccupationTypeManagement();
+			$res = $occupationTypeManagement->deleteOccupationType($occ_type_name,$currunt_user_id);
 			
             if ($res == DELETE_SUCCESSFULLY) {
                 $response["error"] = false;
-                $response["message"] = "Project is successfully deleted";
+                $response["message"] = "Occupation_type is successfully deleted";
             } else if ($res == DELETE_FAILED) {
                 $response["error"] = true;
-                $response["message"] = "Oops! An error occurred while deleting project";
+                $response["message"] = "Oops! An error occurred while deleting Occupation_type";
             } else if ($res == NOT_EXISTED) {
                 $response["error"] = true;
-                $response["message"] = "Sorry, this project is not exist";
+                $response["message"] = "Sorry, this Occupation_type is not exist";
             }
             // echo json response
             echoRespnse(201, $response);
@@ -163,19 +163,19 @@ $app->delete('/project_delete', 'authenticate', function() use ($app) {
 
 		
 /**
- * get one project
+ * get one occupation_type
  * method GET
- * url /project/:projectName          
+ * url /occupation_type/:projectName          
  */
-$app->get('/project/:projectName', 'authenticate', function($pro_name) {
+$app->get('/occupation_type/:projectName', 'authenticate', function($occ_type_name) {
             global $currunt_user_id;
             $response = array();
             
-			$projectManagement = new ProjectManagement();
-			$res = $projectManagement->getProjectByProjectName($pro_name);
+			$occupationTypeManagement = new OccupationTypeManagement();
+			$res = $occupationTypeManagement->getOccupationTypeByProjectName($occ_type_name);
 
             $response["error"] = false;
-            $response["project"] = $res;
+            $response["occupation_type"] = $res;
 
             
 
@@ -185,32 +185,30 @@ $app->get('/project/:projectName', 'authenticate', function($pro_name) {
 /**
  * Listing all projects
  * method GET
- * url /projects        
+ * url /occupation_type     
  */
-$app->get('/projects', 'authenticate', function() {
+$app->get('/occupation_type', 'authenticate', function() {
             global $user_id;
 			
             $response = array();
 			
-            $projectManagement = new ProjectManagement();
-			$res = $projectManagement->getAllProjects();
+            $occupationTypeManagement = new OccupationTypeManagement();
+			$res = $occupationTypeManagement->getAllProjects();
 
             $response["error"] = false;
-            $response["project"] = array();
+            $response["occupation_type"] = array();
 
             // looping through result and preparing projects array
             while ($project = $res->fetch_assoc()) {
                 $tmp = array();
 				
-                $tmp["pro_name"] = $project["pro_name"];
-                $tmp["pro_discription"] = $project["pro_discription"];
-				$tmp["pro_PDF_path"] = $project["pro_PDF_path"];
-				$tmp["pro_supervisor_id"] = $project["pro_supervisor_id"];
+                $tmp["occ_type_name"] = $project["occ_type_name"];
+                $tmp["occ_type_description"] = $project["occ_type_description"];
                 $tmp["status"] = $project["status"];
                 $tmp["recode_added_at"] = $project["recode_added_at"];
 				$tmp["recode_added_by"] = $project["recode_added_by"];
 				
-                array_push($response["project"], $tmp);
+                array_push($response["occupation_type"], $tmp);
             }
 
             echoRespnse(200, $response);
