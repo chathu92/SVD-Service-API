@@ -19,7 +19,7 @@ function authenticate(\Slim\Route $route) {
     $headers = apache_request_headers();
     $response = array();
     $app = \Slim\Slim::getInstance();
-
+ 
    // Verifying Authorization Header
     if (isset($headers['Authorization'])) {
         $operationalUserManagement = new OperationalUserManagement();
