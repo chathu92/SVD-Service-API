@@ -20,7 +20,7 @@ class MotherManagement {
 	
 	
 /*
- * ------------------------ OCCUPATION TYPE TABLE METHODS ------------------------
+ * ------------------------  OCCUPATION TYPE TABLE METHODS ------------------------
  */
 
     /**
