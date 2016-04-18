@@ -242,7 +242,7 @@ class GuardianManagement {
 		$stmt->store_result();
         $num_rows = $stmt->num_rows;
         $stmt->close();
-        return ($num_rows > 0); //if it has more than zero number of rows; then  it sends true
+        return ($num_rows > 0);  //if it has more than zero number of rows; then  it sends true
     }
 
 }
