@@ -3,7 +3,7 @@
  * Class to handle all the exam details
  * This class will have CRUD methods for exam
  *
- * @author Chathuri Gunarathna
+ * @author Chathuri  Gunarathna
  *
  */
 
