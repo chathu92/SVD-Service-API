@@ -20,7 +20,7 @@ class SiblingsManagement {
 	
 	
 /*
- * ------------------------ OCCUPATION TYPE TABLE METHODS ------------------------
+ * ------------------------  OCCUPATION TYPE TABLE METHODS ------------------------
  */
 
     /**
