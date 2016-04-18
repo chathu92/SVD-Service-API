@@ -7,7 +7,7 @@
  *
  */
 
-class OccupationTypeManagement {
+class FatherManagement {
 
     private $conn;
 
@@ -32,32 +32,30 @@ class OccupationTypeManagement {
      *
      * @return database transaction status
      */
-    public function createOccupation_type($occ_type_name, $occ_type_description, $recode_added_by ) {
+    public function createfarher($far_name, $far_phone_number, $far_adress, $far_email_address,$far_occupation, $far_occupation_type,$far_office_address, $far_office_phone_number,$far_stu_addmision_number, $far_old_student_number,$far_other_interactions_with_dp, $far_nic, $far_tea_id, $recode_added_by ) {
 
 		
         $response = array();
 		
-        // First check if project already existed in db
-        if (!$this->isOccupation_typeExists($occ_type_name)) {
+
   
-            // insert query
-			 $stmt = $this->conn->prepare("INSERT INTO occupation_type(occ_type_name, occ_type_description, recode_added_by) values(?, ?, ?)");
-			 $stmt->bind_param("ssi", $occ_type_name, $occ_type_description, $recode_added_by );
-			 $result = $stmt->execute();
-
-			 $stmt->close();
-
-        } else {
-            // Project is not already existed in the db
-            return ALREADY_EXISTED;
-        }
-		
-         
+        // insert query
+		$stmt = $this->conn->prepare("INSERT INTO father(far_name, far_phone_number, far_adress, far_email_address, far_occupation, far_occupation_type, far_office_address, far_office_phone_number, far_stu_addmision_number, far_old_student_number, far_other_interactions_with_dp, far_nic, far_tea_id, recode_added_by) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		$stmt->bind_param("sssssissssssii", $far_name, $far_phone_number, $far_adress, $far_email_address,$far_occupation, $far_occupation_type,$far_office_address, $far_office_phone_number,$far_stu_addmision_number, $far_old_student_number,$far_other_interactions_with_dp, $far_nic, $far_tea_id, $recode_added_by );
+		$result = $stmt->execute();
 
         // Check for successful insertion
         if ($result) {
-			// project successfully inserted
-            return CREATED_SUCCESSFULLY;
+			$stmt = $this->conn->prepare("SELECT LAST_INSERT_ID();");
+			if ($stmt->execute()) {
+				$stmt->bind_result($LAST_INSERT_ID);
+				$stmt->fetch();
+				$stmt->close();
+				return $LAST_INSERT_ID;
+			} else {
+				return CREATE_FAILED;
+			}
+			
         } else {
             // Failed to create project
             return CREATE_FAILED;
@@ -130,6 +128,11 @@ class OccupationTypeManagement {
 			$stmt = $this->conn->prepare("UPDATE occupation_type set status = 3, recode_modified_at = now() , recode_modified_by = ? where occ_type_name = ? and (status = 1 or status = 2)");
 			$stmt->bind_param("is", $recode_added_by,$occ_type_name);
 			$result = $stmt->execute();
+			
+			$stmt->bind_result($occ_type_name, $cc_type_description, $status, $recode_added_at, $recode_added_by);
+            $stmt->fetch();
+            $occupation_type = array();
+            $occupation_type["occ_type_name"] = $occ_type_name;
 			
             $stmt->close();
 

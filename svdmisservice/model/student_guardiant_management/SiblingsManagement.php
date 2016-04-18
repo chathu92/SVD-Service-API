@@ -7,7 +7,7 @@
  *
  */
 
-class OccupationTypeManagement {
+class SiblingsManagement {
 
     private $conn;
 
@@ -32,17 +32,18 @@ class OccupationTypeManagement {
      *
      * @return database transaction status
      */
-    public function createOccupation_type($occ_type_name, $occ_type_description, $recode_added_by ) {
+    public function createSiblings($stu_id, $slib_id, $recode_added_by ) {
 
 		
+        
         $response = array();
 		
         // First check if project already existed in db
-        if (!$this->isOccupation_typeExists($occ_type_name)) {
+        if (!$this->isSiblingsExists($stu_id, $slib_id)) {
   
             // insert query
-			 $stmt = $this->conn->prepare("INSERT INTO occupation_type(occ_type_name, occ_type_description, recode_added_by) values(?, ?, ?)");
-			 $stmt->bind_param("ssi", $occ_type_name, $occ_type_description, $recode_added_by );
+			 $stmt = $this->conn->prepare("call insert_siblings(?,?,?)");
+			 $stmt->bind_param("iii", $stu_id, $slib_id, $recode_added_by );
 			 $result = $stmt->execute();
 
 			 $stmt->close();
@@ -210,9 +211,9 @@ class OccupationTypeManagement {
      *
      * @return boolean
      */
-    private function isOccupation_typeExists($occ_type_name) {
-		$stmt = $this->conn->prepare("SELECT occ_type_name from occupation_type WHERE (status = 1 or status = 2)  and occ_type_name = ?  ");
-        $stmt->bind_param("s",$occ_type_name);
+    private function isSiblingsExists($stu_id, $slib_id) {
+		$stmt = $this->conn->prepare("SELECT stu_id from siblings WHERE (status = 1 or status = 2)  and stu_id = ?  and slib_id = ?");
+        $stmt->bind_param("ii",$stu_id, $slib_id);
         $stmt->execute();
 		$stmt->store_result();
         $num_rows = $stmt->num_rows;
