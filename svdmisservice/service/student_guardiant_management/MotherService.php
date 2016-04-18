@@ -23,7 +23,7 @@ function authenticate(\Slim\Route $route) {
    // Verifying Authorization Header
     if (isset($headers['Authorization'])) {
         $operationalUserManagement = new OperationalUserManagement();
-
+ 
         // get the api key
         $api_key = $headers['Authorization'];
         // validating api key
